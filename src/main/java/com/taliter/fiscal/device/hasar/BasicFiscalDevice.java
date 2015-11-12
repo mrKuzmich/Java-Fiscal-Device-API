@@ -26,7 +26,6 @@ public class BasicFiscalDevice implements FiscalDevice
 	private static final int SN_MIN = 0x20;
 	private static final int SN_MAX = 0x7F;
 	private static final int SN_STEP = 1;
-	private static final int SN_RANGE = SN_MAX - SN_MIN + 1;
 
 	private FiscalPort port;
 	private int timeout;
@@ -53,7 +52,7 @@ public class BasicFiscalDevice implements FiscalDevice
 		this.maxTries = maxTries;
 		this.encoding = encoding;
 		this.baseRolloverYear = baseRolloverYear;
-		serialNumber = ((int) ((System.currentTimeMillis() & (-1L >>> 1)) % (SN_RANGE / SN_STEP))) * SN_STEP + SN_MIN;
+		serialNumber = ((int) ((System.currentTimeMillis() & (-1L >>> 1)) % (getSnRange() / getSnStep()))) * getSnStep() + getSnMin();
 	}
 
 	public void open() throws Exception
@@ -140,10 +139,26 @@ public class BasicFiscalDevice implements FiscalDevice
 
 	public FiscalPacket createFiscalPacket() { return new HasarFiscalPacket(encoding, baseRolloverYear); }
 
+	protected int getSnMin() {
+		return SN_MIN;
+	}
+
+	protected int getSnMax() {
+		return SN_MAX;
+	}
+
+	protected int getSnStep() {
+		return SN_STEP;
+	}
+
+	protected int getSnRange() {
+		return getSnMax() - getSnMin() + 1;
+	}
+
 	private int nextSerialNumber()
 	{
-		serialNumber += SN_STEP;
-		if (serialNumber > SN_MAX) serialNumber -= SN_RANGE;
+		serialNumber += getSnStep();
+		if (serialNumber > getSnMax()) serialNumber -= getSnRange();
 		return serialNumber;
 	}
 
