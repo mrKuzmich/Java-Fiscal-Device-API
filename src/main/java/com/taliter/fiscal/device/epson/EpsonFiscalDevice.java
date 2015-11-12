@@ -5,6 +5,7 @@ import com.taliter.fiscal.device.FiscalDeviceEventHandler;
 import com.taliter.fiscal.device.FiscalPacket;
 import com.taliter.fiscal.device.InvalidFiscalResponseException;
 import com.taliter.fiscal.device.hasar.BasicFiscalDevice;
+import com.taliter.fiscal.device.hasar.HasarFiscalPacket;
 import com.taliter.fiscal.port.FiscalPort;
 
 import java.io.IOException;
@@ -132,5 +133,10 @@ public class EpsonFiscalDevice extends BasicFiscalDevice {
   @Override
   protected int getSnMax() {
     return SN_MAX;
+  }
+
+  @Override
+  public FiscalPacket createFiscalPacket() {
+    return new EpsonFiscalPacket(getEncoding(), getBaseRolloverYear());
   }
 }

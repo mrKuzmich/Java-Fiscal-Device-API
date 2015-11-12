@@ -160,11 +160,13 @@ public class EpsonFiscalPacket extends AbstractFiscalPacket {
   // Special Fields
 
   public void setCommandCode(int value) {
-    setByte(0, value);
+    final byte[] command = new byte[]{(byte)(value >>> 8),(byte)value};
+    set(0, command);
   }
 
   public int getCommandCode() {
-    return getByte(0);
+    byte[] v = get(0);
+    return ByteFormatter.byteToInt(v, 2);
   }
 
   public void setPrinterStatus(int value) {
