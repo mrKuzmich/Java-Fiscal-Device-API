@@ -167,7 +167,13 @@ public class BasicFiscalDevice implements FiscalDevice
 		// Calculate length.
 		int size = packet.getSize();
 		int l = extendedProtocol ? 8 : 7;
-		for (int i = 0; i < size; i++) l += (i != 0 ? 1 : 0) + packet.get(i).length;
+		for (int i = 0; i < size; i++) {
+			final byte[] field = packet.get(i);
+			l += (i != 0 ? 1 : 0) + field.length;
+			for (byte item : field)
+				if (ASCII_ETX == (item & 0xFF) || ASCII_STX == (item & 0xFF))
+					l++;
+		}
 
 		// Fomart packet.
 		byte[] b = new byte[l];
@@ -184,7 +190,12 @@ public class BasicFiscalDevice implements FiscalDevice
 			for (int j = 0; j < fl; j++)
 			{
 				int x = f[j] & 0xFF;
-				if (x < 0x20) throw new IllegalArgumentException("Invalid value in byte " + j + " of field " + i + " (" + x + ")");
+//				if (x < 0x20) throw new IllegalArgumentException("Invalid value in byte " + j + " of field " + i + " (" + x + ")");
+				if (x == ASCII_STX || x == ASCII_ETX) {
+					// add ASCII_ESC before special symbols
+					b[p++] = (byte) ASCII_ESC;
+					cs += ASCII_ESC;
+				}
 				b[p++] = (byte) x; cs += x;
 			}
 		}
@@ -219,7 +230,7 @@ public class BasicFiscalDevice implements FiscalDevice
 			finally { if (st != FiscalDeviceEventHandler.STATUS_NORMAL) onStatus(requestToReport, FiscalDeviceEventHandler.STATUS_NORMAL); }
 			int cs = x;
 			x = in.read(); cs += x;
-			if (x < 0x20)	// SN
+			if (x < getSnMin())	// SN
 			{
 				receivedInvalidSerialNumberByte(x);
 				continue receive;
@@ -240,7 +251,7 @@ public class BasicFiscalDevice implements FiscalDevice
 			b.reset();
 			for (;;)
 			{
-				if (x >= 0x20)
+				if (x != ASCII_FS && x != ASCII_ETX)
 				{
 					b.write(x);
 					x = in.read(); cs += x;
@@ -253,9 +264,8 @@ public class BasicFiscalDevice implements FiscalDevice
 					x = in.read(); cs += x;
 					continue;
 				}
-				if (x == ASCII_ETX) break;
-				receivedInvalidFieldByte(sn, packet, x);
-				continue receive;
+//				if (x == ASCII_ETX) break;
+				break;
 			}
 			cs &= 0xFFFF;	// Checksum
 			int rcs = 0;

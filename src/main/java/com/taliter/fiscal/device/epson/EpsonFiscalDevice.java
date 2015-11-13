@@ -76,8 +76,9 @@ public class EpsonFiscalDevice extends BasicFiscalDevice {
     if (request == null) throw new NullPointerException();
     if (response == null) throw new NullPointerException();
     if (request == response) throw new IllegalArgumentException();
-    int reqc = request.getCommandCode();
+//    int reqc = request.getCommandCode();
     basicExecute(request, response, request);
+/*
     int resc = response.getCommandCode();
     if (reqc != resc && reqc != CMD_STATPRN) {
       if (resc != CMD_STATPRN) throw new InvalidFiscalResponseException(request, response);
@@ -91,6 +92,7 @@ public class EpsonFiscalDevice extends BasicFiscalDevice {
         if (reqc != resc) throw new InvalidFiscalResponseException(request, response);
       }
     }
+*/
     onExecute(request, response);
   }
 
