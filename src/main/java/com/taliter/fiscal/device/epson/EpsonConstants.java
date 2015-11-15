@@ -8,7 +8,8 @@ public interface EpsonConstants
 	public int CMD_STATUS_REQUEST_EXT         = 0x0001;
 	public int CMD_GET_INFORMATION_EXT        = 0x020A;
 
-	public int CMD_DAILY_CLOSE_EXT            = 0x0801;
+	public int CMD_DAILY_CLOSE_Z_EXT          = 0x0801;
+	public int CMD_DAILY_CLOSE_X_EXT          = 0x0802;
 	public int CMD_DAILY_CLOSE_BY_DATE_EXT    = 0x0810;
 	public int CMD_DAILY_CLOSE_BY_NUMBER_EXT  = 0x0811;
 
