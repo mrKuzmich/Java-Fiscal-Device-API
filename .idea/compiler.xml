@@ -18,5 +18,11 @@
         <processorPath useClasspath="true" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="fiscal-device_main" target="1.5" />
+      <module name="fiscal-device_test" target="1.5" />
+      <module name="samples_main" target="1.5" />
+      <module name="samples_test" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>
